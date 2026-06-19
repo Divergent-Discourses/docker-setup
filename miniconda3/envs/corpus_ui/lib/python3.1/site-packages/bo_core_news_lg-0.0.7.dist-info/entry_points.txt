@@ -1,0 +1,2 @@
+[spacy_models]
+bo_core_news_lg = bo_core_news_lg

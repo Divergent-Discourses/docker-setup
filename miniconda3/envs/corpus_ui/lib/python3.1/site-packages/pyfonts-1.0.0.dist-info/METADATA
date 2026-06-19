@@ -1,0 +1,61 @@
+Metadata-Version: 2.4
+Name: pyfonts
+Version: 1.0.0
+Summary: A simple and reproducible way of using fonts in matplotlib
+Author-email: Joseph Barbier <joseph.barbierdarnal@gmail.com>
+License-Expression: MIT
+Project-URL: Homepage, https://josephbarbierdarnal.github.io/pyfonts/
+Project-URL: Issues, https://github.com/JosephBARBIERDARNAL/pyfonts/issues
+Project-URL: Documentation, https://josephbarbierdarnal.github.io/pyfonts/
+Project-URL: Repository, https://github.com/JosephBARBIERDARNAL/pyfonts
+Keywords: matplotlib,font,reproducibility
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: Framework :: Matplotlib
+Classifier: Development Status :: 5 - Production/Stable
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: matplotlib
+Requires-Dist: requests
+Dynamic: license-file
+
+# pyfonts
+
+<img src="https://github.com/JosephBARBIERDARNAL/static/blob/main/python-libs/pyfonts/image.png?raw=true" alt="pyfonts logo" align="right" width="150px"/>
+
+A **simple** and **reproducible** way of using fonts in matplotlib.
+
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pyfonts)
+
+<br>
+
+## Quick start
+
+```py
+import matplotlib.pyplot as plt
+from pyfonts import load_google_font
+
+font = load_google_font("Fascinate Inline")
+
+fig, ax = plt.subplots()
+ax.text(
+    x=0.2,
+    y=0.5,
+    s="Hey there!",
+    size=30,
+    font=font
+)
+```
+
+![](https://raw.githubusercontent.com/JosephBARBIERDARNAL/pyfonts/refs/heads/main/quickstart.png)
+
+[**See more examples**](https://josephbarbierdarnal.github.io/pyfonts/reference/load_google_font#examples)
+
+## Installation
+
+```bash
+pip install pyfonts
+```
+
+<br><br>
