@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Divergent Discourses</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0f1724;
+      --muted:#9aa4b2;
+      --accent:#6dd3ff;
+      --accent-2:#7b61ff;
+      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      --radius:12px;
+      --max-width:980px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#071028 0%, #0b1220 60%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:36px 20px;
+    }
+
+    .page {
+      width:100%;
+      max-width:var(--max-width);
+      margin:0 auto;
+      text-align:center;
+    }
+
+    /* Centered title area */
+    header.site-header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      margin-bottom:28px;
+    }
+    .logo{
+      width:56px;
+      height:56px;
+      border-radius:10px;
+      background: linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color:#042033;
+      font-size:20px;
+      box-shadow: 0 6px 18px rgba(123,97,255,0.12), inset 0 -6px 18px rgba(255,255,255,0.06);
+    }
+    h1.title {
+      margin:0;
+      font-size:28px;
+      color:#f6fbff;
+      letter-spacing:-0.4px;
+    }
+    .subtitle {
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Center column with Quick Links only */
+    .center {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48vh;
+    }
+
+    .links-card{
+      width:100%;
+      max-width:520px;
+      background:var(--card-bg);
+      border-radius:var(--radius);
+      padding:26px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+      text-align:left;
+      margin:0 auto;
+    }
+
+    .links-card h2{
+      margin:0 0 8px 0;
+      font-size:18px;
+      color:#eaf6ff;
+    }
+    .links-card p.desc{
+      margin:0 0 16px 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .links{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      padding:12px 14px;
+      border-radius:10px;
+      color:#042033;
+      font-weight:600;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      box-shadow: 0 8px 20px rgba(123,97,255,0.12);
+      transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    .btn.secondary{
+      background:transparent;
+      color:#eaf6ff;
+      border:1px solid rgba(255,255,255,0.06);
+      font-weight:600;
+      box-shadow:none;
+    }
+    .btn:active{ transform:translateY(1px); }
+    .btn:hover{ opacity:0.95; box-shadow: 0 12px 30px rgba(2,6,23,0.6); }
+
+    .small-note{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media (max-width:640px){
+      .links-card{ padding:18px; }
+      .logo{ width:48px; height:48px; font-size:18px; }
+      h1.title{ font-size:22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header" role="banner" aria-labelledby="site-title">
+      <div class="logo" aria-hidden="true">DD</div>
+      <h1 id="site-title" class="title">Divergent Discourses</h1>
+      <p class="subtitle">Digitised Tibetan newspaper corpus</p>
+    </header>
+
+    <main class="center" role="main" aria-labelledby="quick-links-title">
+      <section class="links-card" aria-labelledby="quick-links-title">
+        <h2 id="quick-links-title">Quick Links</h2>
+        <p class="desc">Direct access to the main tools and resources.</p>
+
+        <nav class="links" role="navigation" aria-label="Primary links">
+          <a class="btn" href="/search/" title="Open search interface">🔎 Search Interface</a>
+          <a class="btn secondary" href="/corpus_analysis/" title="Open corpus analysis">📊 Corpus Analysis Tool</a>
+          <a class="btn secondary" href="/images/" title="Browse newspaper images">🖼️ Newspaper Image</a>
+        </nav>
+
+        <p class="small-note">Tip: Use the search to find articles by date, keyword, or publication.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

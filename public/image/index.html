@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newspaper Images – Divergent Discourses</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --ink:       #1a1410;
+            --parchment: #f5f0e8;
+            --warm-mid:  #c9b89a;
+            --accent:    #8b3a2a;
+            --border:    #d4c9b5;
+            --shadow:    rgba(26,20,16,0.10);
+            --card-bg:   #fffcf7;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--parchment); color: var(--ink);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+        }
+        header {
+            position: relative; z-index: 1;
+            border-bottom: 1px solid var(--border);
+            padding: 1.4rem 2.5rem;
+            display: flex; align-items: baseline; gap: 1.2rem;
+        }
+        header a.home {
+            font-family: 'DM Mono', monospace; font-size: 0.68rem;
+            letter-spacing: 0.13em; text-transform: uppercase;
+            color: var(--accent); text-decoration: none; opacity: 0.8; transition: opacity .2s;
+        }
+        header a.home:hover { opacity: 1; }
+        header h1 { font-size: 1.05rem; font-weight: 400; letter-spacing: 0.03em; }
+        header .sep { color: var(--warm-mid); }
+
+        #breadcrumb {
+            position: relative; z-index: 1;
+            padding: 0.9rem 2.5rem; border-bottom: 1px solid var(--border);
+            font-family: 'DM Mono', monospace; font-size: 0.68rem;
+            letter-spacing: 0.09em; text-transform: uppercase; color: #7a6a58;
+            display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+        }
+        #breadcrumb a { color: var(--accent); text-decoration: none; transition: opacity .15s; }
+        #breadcrumb a:hover { opacity: 0.7; }
+        #breadcrumb .crumb-sep { opacity: 0.4; }
+
+        .hero {
+            position: relative; z-index: 1;
+            padding: 2.4rem 2.5rem 1.8rem; border-bottom: 1px solid var(--border);
+        }
+        .hero-title { font-size: 2.6rem; font-weight: 600; line-height: 1.1; }
+        .hero-title em { font-style: italic; color: var(--accent); }
+        .hero-sub { font-style: italic; font-size: 1rem; color: #6b5d4e; margin-top: 0.35rem; }
+
+        main { position: relative; z-index: 1; flex: 1; padding: 2rem 2.5rem 4rem; }
+
+        #stats {
+            font-family: 'DM Mono', monospace; font-size: 0.68rem;
+            letter-spacing: 0.08em; text-transform: uppercase; color: #9a8878;
+            margin-bottom: 1.6rem;
+        }
+
+        #dir-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+
+        .dir-row {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border); border-radius: 2px;
+            background: var(--card-bg);
+            transition: border-color .2s, background .2s, transform .15s;
+            animation: fadeUp .3s ease both;
+            text-decoration: none; color: var(--ink);
+        }
+        div.dir-row { cursor: pointer; }
+        .dir-row:hover { border-color: var(--accent); background: #fff8f4; transform: translateX(3px); }
+
+        .dir-icon { font-size: 1.3rem; opacity: 0.55; flex-shrink: 0; }
+        .dir-name  { font-size: 1.15rem; font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dir-arrow { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); opacity: 0.6; flex-shrink: 0; }
+
+        /* ── Download button ── */
+        .dl-btn {
+            flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.28rem 0.65rem;
+            border: 1px solid var(--border); border-radius: 2px;
+            background: transparent;
+            font-family: 'DM Mono', monospace; font-size: 0.63rem;
+            letter-spacing: 0.07em; text-transform: uppercase;
+            color: #7a6a58; cursor: pointer;
+            transition: border-color .18s, color .18s, background .18s;
+            text-decoration: none;
+            position: relative; z-index: 2;
+        }
+        .dl-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #fff3ef; }
+        .dl-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .dl-btn svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dl-btn .spinner {
+            width: 10px; height: 10px;
+            border: 1.5px solid currentColor; border-top-color: transparent;
+            border-radius: 50%; animation: spin .7s linear infinite;
+        }
+
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(8px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* ── CSV viewer panel ── */
+        .csv-panel {
+            border: 1px solid var(--border); border-top: none;
+            border-radius: 0 0 2px 2px;
+            background: var(--card-bg);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height .35s ease, padding .35s ease;
+        }
+        .csv-panel.open { max-height: 600px; }
+        .csv-scroll {
+            overflow: auto; max-height: 560px;
+            padding: 0.75rem 1rem 1rem;
+        }
+        .csv-loading {
+            padding: 1.2rem 1rem;
+            font-style: italic; font-size: 0.9rem; color: #9a8878;
+        }
+        .csv-error {
+            padding: 1rem; font-size: 0.85rem; color: var(--accent);
+            font-family: 'DM Mono', monospace;
+        }
+        .csv-table {
+            width: 100%; border-collapse: collapse;
+            font-family: 'DM Mono', monospace; font-size: 0.7rem;
+            letter-spacing: 0.02em; color: var(--ink);
+        }
+        .csv-table th {
+            position: sticky; top: 0;
+            background: #f0ebe0; border-bottom: 2px solid var(--border);
+            padding: 0.4rem 0.7rem; text-align: left;
+            font-weight: 400; letter-spacing: 0.07em; text-transform: uppercase;
+            font-size: 0.63rem; white-space: nowrap; color: #5a4d40;
+        }
+        .csv-table td {
+            padding: 0.35rem 0.7rem;
+            border-bottom: 1px solid #ede8df;
+            white-space: nowrap; max-width: 22ch;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .csv-table tr:last-child td { border-bottom: none; }
+        .csv-table tr:hover td { background: #fff8f4; }
+        .csv-row-num { color: #b8a898; user-select: none; }
+        .csv-meta {
+            font-family: 'DM Mono', monospace; font-size: 0.62rem;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: #9a8878; padding: 0.4rem 1rem 0;
+        }
+
+        footer {
+            position: relative; z-index: 1; border-top: 1px solid var(--border);
+            padding: 1rem 2.5rem;
+            font-family: 'DM Mono', monospace; font-size: 0.63rem;
+            letter-spacing: 0.08em; text-transform: uppercase; color: var(--warm-mid);
+            display: flex; justify-content: space-between;
+        }
+        footer a { color: inherit; text-decoration: none; }
+        footer a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<header>
+    <a class="home" href="/">← Home</a>
+    <span class="sep">/</span>
+    <h1>Divergent Discourses — Newspaper Images</h1>
+</header>
+
+<nav id="breadcrumb"></nav>
+
+<div class="hero">
+    <div>
+        <h2 class="hero-title">Image <em>Archive</em></h2>
+        <p class="hero-sub">Digitised pages from the Tibetan newspaper corpus</p>
+    </div>
+</div>
+
+<main>
+    <div id="stats"></div>
+    <div id="dir-list"></div>
+</main>
+
+<footer>
+    <span>Divergent Discourses — Tibetan Newspaper Corpus</span>
+    <span>
+        <a href="/search">Search</a> &nbsp;·&nbsp;
+        <a href="/corpus_analysis">Corpus Analysis</a>
+    </span>
+</footer>
+
+<script>
+
+    const BASE     = '/newspaper-images/';
+    const IMG_EXTS = new Set(['jpg','jpeg','png','tif','tiff','gif','webp']);
+
+    let pathStack = [{ label: 'Images', url: BASE }];
+
+    function currentUrl() { return pathStack[pathStack.length - 1].url; }
+
+    async function init() {
+        renderBreadcrumb();
+        await loadDir(BASE);
+    }
+
+    async function navigateTo(label, url) {
+        pathStack.push({ label, url });
+        renderBreadcrumb();
+        await loadDir(url);
+    }
+
+    async function loadDir(url) {
+        document.getElementById('stats').textContent = '';
+        document.getElementById('dir-list').innerHTML =
+            '<div style="padding:2rem 0; font-style:italic; color:#9a8878;">Loading…</div>';
+        try {
+            const res = await fetch(url, { headers: { Accept: 'application/json' } });
+            if (!res.ok) throw new Error(res.status);
+            const items = await res.json();
+            renderItems(items.filter(f => f.name !== 'index.html'), url);
+        } catch {
+            document.getElementById('dir-list').innerHTML =
+                '<div style="padding:2rem 0; font-style:italic; color:#9a8878;">Could not load directory.</div>';
+        }
+    }
+
+    // Shared download icon SVG
+    const DL_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8 2v8M5 7l3 3 3-3"/>
+        <path d="M3 13h10"/>
+    </svg>`;
+
+    function renderItems(items, baseUrl) {
+        const dirs  = items.filter(f => f.type === 'directory');
+        const files = items.filter(f => f.type === 'file');
+
+        const parts = [];
+        if (dirs.length)  parts.push(`${dirs.length} folder${dirs.length  !== 1 ? 's' : ''}`);
+        if (files.length) parts.push(`${files.length} file${files.length !== 1 ? 's' : ''}`);
+        document.getElementById('stats').textContent = parts.join('  ·  ');
+
+        const dirHTML = dirs.map((d, i) => {
+            const childUrl = baseUrl + encodeURIComponent(d.name) + '/';
+            const btnId    = `dl-dir-${i}`;
+            return `<div class="dir-row" style="animation-delay:${i*25}ms"
+                         onclick="navigateTo('${esc(d.name)}', '${esc(childUrl)}')">
+                        <span class="dir-icon">📁</span>
+                        <span class="dir-name">${esc(d.name)}</span>
+                        <button id="${btnId}" class="dl-btn"
+                                onclick="event.stopPropagation(); downloadFolder('${esc(childUrl)}','${esc(d.name)}','${btnId}')"
+                                title="Download folder as ZIP">
+                            ${DL_ICON}<span>ZIP</span>
+                        </button>
+                        <span class="dir-arrow">→</span>
+                    </div>`;
+        }).join('');
+
+        const fileHTML = files.map((f, i) => {
+            const ext     = f.name.split('.').pop().toLowerCase();
+            const isImage = IMG_EXTS.has(ext);
+            const isCsv   = ext === 'csv';
+            const fileUrl = baseUrl + encodeURIComponent(f.name);
+            const icon    = isImage ? '🖼' : isCsv ? '📊' : '📄';
+            const panelId = `csv-panel-${dirs.length + i}`;
+            const delay   = `animation-delay:${(dirs.length + i)*25}ms`;
+
+            if (isCsv) {
+                return `<div style="${delay}">
+                    <div class="dir-row" style="border-radius:2px 2px 0 0; cursor:pointer"
+                         onclick="toggleCsv('${esc(fileUrl)}','${panelId}',this)">
+                        <span class="dir-icon">${icon}</span>
+                        <span class="dir-name">${esc(f.name)}</span>
+                        <a class="dl-btn" href="${fileUrl}" download="${esc(f.name)}"
+                           title="Download CSV" onclick="event.stopPropagation()">
+                            ${DL_ICON}<span>DL</span>
+                        </a>
+                        <span class="dir-arrow" id="${panelId}-arrow" style="font-size:0.75rem">▾</span>
+                    </div>
+                    <div class="csv-panel" id="${panelId}">
+                        <div class="csv-loading">Loading…</div>
+                    </div>
+                </div>`;
+            }
+
+            return `<a class="dir-row" href="${fileUrl}" target="_blank" style="${delay}">
+                        <span class="dir-icon">${icon}</span>
+                        <span class="dir-name">${esc(f.name)}</span>
+                        <a class="dl-btn" href="${fileUrl}" download="${esc(f.name)}"
+                           title="Download file" onclick="event.stopPropagation()">
+                            ${DL_ICON}<span>DL</span>
+                        </a>
+                        <span class="dir-arrow" style="font-size:0.6rem;opacity:0.4">↗</span>
+                    </a>`;
+        }).join('');
+
+        document.getElementById('dir-list').innerHTML = dirHTML + fileHTML
+            || '<div style="padding:2rem 0; font-style:italic; color:#9a8878;">Empty directory.</div>';
+    }
+
+    // ── Folder ZIP download ───────────────────────────────────────────────────
+
+    async function downloadFolder(url, name, btnId) {
+        const btn = document.getElementById(btnId);
+        if (!btn || btn.disabled) return;
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span><span>Zipping…</span>`;
+
+        const skipped = [];
+
+        try {
+            const zip = new JSZip();
+            await collectFiles(zip, url, '', skipped, btn);
+            const fileCount = Object.keys(zip.files).filter(k => !zip.files[k].dir).length;
+            if (fileCount === 0) {
+                throw new Error('No files could be fetched. The server may not support reading file contents via JavaScript.\n\nCheck the browser console (F12) for details.');
+            }
+            btn.innerHTML = `<span class="spinner"></span><span>Building…</span>`;
+            const blob = await zip.generateAsync({
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 4 }
+            });
+            triggerDownload(blob, name + '.zip');
+            if (skipped.length) {
+                console.warn('ZIP: skipped files due to fetch errors:', skipped);
+                alert(`ZIP created with ${fileCount} file(s).\n\nSkipped ${skipped.length} file(s) due to errors — see browser console (F12) for details.`);
+            }
+        } catch (err) {
+            console.error('ZIP error:', err);
+            alert('Download failed:\n\n' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = DL_ICON + '<span>ZIP</span>';
+        }
+    }
+
+    // Recursively walks a directory URL and adds all files to the JSZip instance.
+    // Failures on individual files are recorded in `skipped` rather than aborting.
+    async function collectFiles(zip, dirUrl, zipPath, skipped, btn) {
+        // Fetch the directory listing
+        let items;
+        try {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 15_000);
+            const res = await fetch(dirUrl, {
+                headers: { Accept: 'application/json' },
+                signal: controller.signal
+            });
+            clearTimeout(tid);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const ct = res.headers.get('content-type') || '';
+            if (!ct.includes('json')) {
+                // Server returned HTML — it likely doesn't support JSON listings for sub-dirs
+                throw new Error(`Server returned "${ct}" instead of JSON for ${dirUrl}. Enable JSON directory listings on the server.`);
+            }
+            items = await res.json();
+        } catch (err) {
+            throw new Error(`Could not list directory "${dirUrl}":\n${err.message}`);
+        }
+
+        // Process entries sequentially to avoid flooding the server
+        for (const item of items.filter(f => f.name !== 'index.html')) {
+            const childPath = zipPath ? zipPath + '/' + item.name : item.name;
+            if (item.type === 'directory') {
+                const childUrl = dirUrl + encodeURIComponent(item.name) + '/';
+                await collectFiles(zip, childUrl, childPath, skipped, btn);
+            } else {
+                const fileUrl = dirUrl + encodeURIComponent(item.name);
+                // Update button label with progress
+                if (btn) btn.innerHTML = `<span class="spinner"></span><span>${skipped.length + Object.keys(zip.files).length + 1}</span>`;
+                try {
+                    const controller = new AbortController();
+                    const tid = setTimeout(() => controller.abort(), 30_000);
+                    const r = await fetch(fileUrl, { signal: controller.signal });
+                    clearTimeout(tid);
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    const blob = await r.blob();
+                    zip.file(childPath, blob);
+                } catch (err) {
+                    console.warn(`ZIP: skipping "${fileUrl}":`, err.message);
+                    skipped.push({ path: fileUrl, reason: err.message });
+                }
+            }
+        }
+    }
+
+    // ── CSV inline viewer ─────────────────────────────────────────────────────
+
+    const csvCache = {};
+
+    async function toggleCsv(url, panelId, rowEl) {
+        const panel = document.getElementById(panelId);
+        const arrow = document.getElementById(panelId + '-arrow');
+        if (!panel) return;
+
+        const isOpen = panel.classList.contains('open');
+        if (isOpen) {
+            panel.classList.remove('open');
+            if (arrow) arrow.textContent = '▾';
+            return;
+        }
+
+        panel.classList.add('open');
+        if (arrow) arrow.textContent = '▴';
+
+        // Already fetched — just show
+        if (csvCache[url]) return;
+
+        panel.innerHTML = '<div class="csv-loading">Loading…</div>';
+
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const text = await res.text();
+            csvCache[url] = text;
+            panel.innerHTML = renderCsvTable(text, url.split('/').pop());
+        } catch (err) {
+            panel.innerHTML = `<div class="csv-error">Could not load file: ${esc(err.message)}</div>`;
+        }
+    }
+
+    function parseCsv(text) {
+        // Handles quoted fields with embedded commas/newlines
+        const rows = [];
+        let row = [], field = '', inQuote = false;
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i], next = text[i + 1];
+            if (inQuote) {
+                if (ch === '"' && next === '"') { field += '"'; i++; }
+                else if (ch === '"')             { inQuote = false; }
+                else                             { field += ch; }
+            } else {
+                if      (ch === '"')  { inQuote = true; }
+                else if (ch === ',')  { row.push(field); field = ''; }
+                else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+                else if (ch === '\r') { /* skip */ }
+                else                  { field += ch; }
+            }
+        }
+        if (field || row.length) { row.push(field); rows.push(row); }
+        return rows.filter(r => r.some(c => c.trim() !== ''));
+    }
+
+    const MAX_ROWS = 500;
+
+    function renderCsvTable(text, filename) {
+        const rows = parseCsv(text);
+        if (!rows.length) return '<div class="csv-loading">Empty file.</div>';
+
+        const [header, ...body] = rows;
+        const shown   = body.slice(0, MAX_ROWS);
+        const cropped = body.length > MAX_ROWS;
+
+        const thHTML = ['#', ...header].map(h =>
+            `<th>${esc(h)}</th>`).join('');
+        const tdHTML = shown.map((r, ri) => {
+            const cells = header.map((_, ci) =>
+                `<td title="${esc(r[ci] ?? '')}">${esc(r[ci] ?? '')}</td>`).join('');
+            return `<tr><td class="csv-row-num">${ri + 1}</td>${cells}</tr>`;
+        }).join('');
+
+        const meta = `<div class="csv-meta">${header.length} col${header.length !== 1 ? 's' : ''}
+            &nbsp;·&nbsp; ${body.length.toLocaleString()} row${body.length !== 1 ? 's' : ''}
+            ${cropped ? `&nbsp;·&nbsp; showing first ${MAX_ROWS}` : ''}</div>`;
+
+        return `${meta}<div class="csv-scroll">
+            <table class="csv-table">
+                <thead><tr>${thHTML}</tr></thead>
+                <tbody>${tdHTML}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function triggerDownload(blob, filename) {
+        const a    = document.createElement('a');
+        a.href     = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+    }
+
+    // ── Breadcrumb ────────────────────────────────────────────────────────────
+
+    function renderBreadcrumb() {
+        document.getElementById('breadcrumb').innerHTML = pathStack.map((p, i) => {
+            const isLast = i === pathStack.length - 1;
+            return isLast
+                ? `<span>${esc(p.label)}</span>`
+                : `<a href="#" onclick="goToCrumb(${i});return false">${esc(p.label)}</a>
+                   <span class="crumb-sep">/</span>`;
+        }).join('');
+    }
+
+    function goToCrumb(index) {
+        pathStack = pathStack.slice(0, index + 1);
+        renderBreadcrumb();
+        loadDir(currentUrl());
+    }
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    init();
+</script>
+</body>
+</html>
