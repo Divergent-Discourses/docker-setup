@@ -1,0 +1,52 @@
+services:
+  nginx:
+    build: .
+    container_name: nginx-dd
+    ports:
+      - "81:80"
+    volumes:
+      - ./data/diverge_images:/mnt/data/diverge_images
+    depends_on:
+      - search
+      - corpus
+      - corpus_api
+    restart: unless-stopped
+
+  search:
+    image: python:3.11
+    container_name: search-app
+    working_dir: /home/vmuser/public/search
+    volumes:
+      - ./public/search:/home/vmuser/public/search
+      - ./miniconda3:/home/vmuser/miniconda3
+      - ./.bknd:/root/.bknd
+    command: /home/vmuser/miniconda3/envs/corpus_ui/bin/streamlit run search.py --server.port 8501
+    ports:
+      - "8502:8501"
+    restart: unless-stopped
+
+  corpus:
+    image: python:3.11
+    container_name: corpus-app
+    working_dir: /mnt/data/corpus_frontend
+    volumes:
+      - ./data/corpus_frontend:/mnt/data/corpus_frontend
+      - ./data/corpus_frontend:/mnt/data/corpus_backend
+      - ./miniconda3:/home/vmuser/miniconda3
+      - ./corpus_analysis_ui/botok_modern_forcolab:/home/vmuser/corpus_analysis_ui/botok_modern_forcolab
+    command: /home/vmuser/miniconda3/envs/corpus_ui/bin/streamlit run Create_Subcorpus.py --server.port 8503
+    ports:
+      - "8504:8503"
+    restart: unless-stopped
+
+  corpus_api:
+    image: python:3.11
+    container_name: corpus-api
+    working_dir: /mnt/data/corpus_backend
+    volumes:
+      - ./data/corpus_backend:/mnt/data/corpus_backend
+      - ./miniconda3:/home/vmuser/miniconda3
+    command: /home/vmuser/miniconda3/envs/corpus_ui/bin/uvicorn main:app --host 0.0.0.0 --port 8505 --workers 2
+    ports:
+      - "8506:8505"
+    restart: unless-stopped
