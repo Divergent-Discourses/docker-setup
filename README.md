@@ -99,7 +99,7 @@ You should see version numbers printed. If so, Docker is ready to use.
 If you haven't already downloaded the application, clone the GitHub repository by typing the following command in the terminal and pressing Enter:
 
 ```
-git clone https://github.com/kyogoku11/docker-setup.git
+git clone https://github.com/Divergent-Discourses/docker-setup.git
 ```
 
 > **Note:** If `git` is not installed, download it from 👉 https://git-scm.com/downloads
@@ -135,16 +135,13 @@ Enter your Docker Hub username and password when prompted.
 Then pull the application image:
 
 ```
-docker pull kyogoku11/divergent_discourses:nginx-v2
+docker pull divergentdiscourses/divergent_discourses:nginx-v2
 ```
 
 Wait until the download is complete.
 
 > **Note:** You need a Docker Hub account with access to the private repository. To get access:
-> 1. Create a free account at 👉 https://hub.docker.com
-> 2. Send your Docker Hub username to the administrator
-> 3. The administrator will add you as a collaborator to the private repository via Docker Hub → Repository Settings → Collaborators
-> 4. Once added, you can log in and pull the image as described above
+> Create a free account at 👉 https://hub.docker.com
 
 ---
 
