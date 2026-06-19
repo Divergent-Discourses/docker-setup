@@ -116,7 +116,7 @@ In the terminal, type the following command and press Enter:
 cd /path/to/docker
 ```
 
-> Replace `/path/to/docker` with the folder where you cloned or downloaded the GitHub repository `docker-setup`. For example, if you downloaded it to your home folder, the path would be `~/docker-setup`.
+> Replace `/path/to/docker` with the folder where you cloned or downloaded the GitHub repository `docker-setup`. For example, if you downloaded it to your home folder, the path would be `~/docker-setup`.	
 
 ---
 
@@ -135,7 +135,7 @@ Enter your Docker Hub username and password when prompted.
 Then pull the application image:
 
 ```
-docker pull kyogoku11/divergent_discourses:nginx
+docker pull kyogoku11/divergent_discourses:nginx-v2
 ```
 
 Wait until the download is complete.
@@ -191,7 +191,7 @@ From the entry page you can access the following features:
 |---|---|
 | 🔎 **Search Interface** | Search through the corpus ⚠️ *Requires API keys — contact the administrator to obtain them before use* |
 | 📊 **Corpus Analysis Tool** | Analyse and explore the corpus |
-| 🖼️ **Newspaper Images** | Browse newspaper image archives |
+| 🖼️ **Newspaper Images** | Browse newspaper image archives | *Currently contains only an example directory with an example file. You can add your own image folders to the `data/diverge_images` folder.* |
 
 Simply click on the button for the feature you want to use.
 
