@@ -2,6 +2,8 @@
 
 This guide explains how to start the application on your computer and access it via your web browser. No technical knowledge is required.
 
+> 💡 **Tip:** If you prefer not to use the terminal, **[Docker Desktop](https://docs.docker.com/desktop/)** provides a graphical interface where you can start, stop, and monitor containers with simple clicks instead of typing commands. Once installed (see below), you can open Docker Desktop and follow its on-screen instructions to manage the application after completing the initial setup steps in this guide.
+
 ---
 
 ## What You Need
