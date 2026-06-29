@@ -186,11 +186,11 @@ Press Enter. You should see the application's entry page.
 
 From the entry page you can access the following features:
 
-| Button | Description |
-|---|---|
-| 🔎 **Search Interface** | Search through the corpus ⚠️ *Requires API keys — contact the administrator to obtain them before use* |
-| 📊 **Corpus Analysis Tool** | Analyse and explore the corpus |
-| 🖼️ **Newspaper Images** | Browse newspaper image archives | *Currently contains only an example directory with an example file. You can add your own image folders to the `data/diverge_images` folder.* |
+| Button | Description                                                                                                                                                    |
+|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 🔎 **Search Interface** | Search through the corpus ⚠️ *Requires API keys — contact the administrator to obtain them before use*                                                         |
+| 📊 **Corpus Analysis Tool** | Analyse and explore the corpus ⚠️ *Some corpus analysis tools may not function properly on computers with limited resources. If this occurs, reduce the size of your subcorpus* |
+| 🖼️ **Newspaper Images** | Browse newspaper image archives                                                                                                                                | *Currently contains only an example directory with an example file. You can add your own image folders to the `data/diverge_images` folder.* |
 
 Simply click on the button for the feature you want to use.
 
