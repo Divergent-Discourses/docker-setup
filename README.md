@@ -137,7 +137,7 @@ Enter your Docker Hub username and password when prompted.
 Then pull the application image:
 
 ```
-docker pull divergentdiscourses/divergent_discourses:nginx-v2
+docker pull divergentdiscourses/divergent_discourses:latest
 ```
 
 Wait until the download is complete.
