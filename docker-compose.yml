@@ -1,7 +1,7 @@
 services:
   nginx:
     #build: .
-    image: divergentdiscourses/divergent_discourses:nginx-v2
+    image: divergentdiscourses/divergent_discourses:latest
     container_name: nginx-dd
     ports:
       - "81:80"
